@@ -40,9 +40,9 @@ instance Ord (WrapType [Double] a) where
 
 {-@ type GenPoint a N  = WrapType (Point N) a @-}
 
-{-@ kmeans' :: n:Int
-            -> k:PosInt
-            -> points:[(GenPoint a n)]
+{-@ kmeans' :: n: Int
+            -> k: PosInt
+            -> points: [(GenPoint a n)]
             -> (Clustering (GenPoint a n)) @-}
 kmeans' n k points = fixpoint (refineCluster n) initialClustering
   where

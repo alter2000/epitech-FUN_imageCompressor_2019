@@ -19,8 +19,9 @@ tests_run:
 
 clean: fclean
 
-fclean: ./.stack-work
+fclean:
 	rm -rf .stack-work tags TAGS
+	rm -rf $(NAME)
 
 re:
 	$(MAKE) fclean

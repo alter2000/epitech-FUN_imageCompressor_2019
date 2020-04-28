@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 2d6a78a42f3fb5ae23d873b286f2c219e4328c9348a56ab4dff4d1c046511bc7
+-- hash: 884a2a1a2c2de324f7a5c55931b149537144a236c36fe0cebc640c2e35b34825
 
 name:           icomp
 version:        0.1.0.0
@@ -77,7 +77,8 @@ test-suite icomp-test
       test
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      base >=4.7 && <5
+      QuickCheck
+    , base >=4.7 && <5
     , hspec
     , icomp
     , random

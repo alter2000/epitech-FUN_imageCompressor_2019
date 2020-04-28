@@ -2,14 +2,31 @@
 {-# LANGUAGE TypeApplications #-}
 
 import Test.Hspec
+import Test.QuickCheck
 import System.IO.Silently
 import System.Environment
 import Control.Exception (evaluate)
 import Prog
 import Lib.Parser
 
+instance Arbitrary Byte  where arbitrary = Byte  <$> arbitrary
+instance Arbitrary Pixel where arbitrary = Pixel <$> arbitrary <*> arbitrary
+instance Arbitrary Opts  where arbitrary = Opts  <$> arbitrary <*> arbitrary <*> arbitrary
+
 main :: IO ()
 main = hspec do
+
+  describe "Lib.Parser.Byte" do
+    it "follows (Read, Show) laws" $ property $
+      \x -> read (show x) == (x :: Byte)
+
+  describe "Lib.Parser.Pixel" do
+    it "follows (Read, Show) laws" $ property $
+      \x -> read (show x) == (x :: Pixel)
+
+  describe "Lib.Parser.toRepr" do
+    it "is the inverse of fromRepr" $ property $
+      \x -> fromRepr (toRepr x) == x
 
   describe "Prog.parseArgs" do
     it "drops invalid arguments" do
@@ -18,6 +35,12 @@ main = hspec do
       withArgs ["2", "0.8", "test/testfile"] parseArgs
         `shouldReturn` Just
         (Opts { k = 2 , cl = 0.8 , fp = inFileContents })
+    it "throws IOError on invalid file read" do
+      withArgs ["2", "0.8", "yeeeeeeeet"] parseArgs
+        `shouldThrow` anyIOException
+    it "calls @error@ on invalid arguments" do
+      withArgs ["2", "0.8"] parseArgs
+        `shouldThrow` anyErrorCall
 
   describe "Prog.calc" do
     it "returns base result" do

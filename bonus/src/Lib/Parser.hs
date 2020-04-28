@@ -65,6 +65,7 @@ splitWhen p s =  case dropWhile p s of
         where (w, s'') = break p s'
 
 
+{-@ toRepr :: v:Color -> ColorRepr  @-}
 toRepr :: Color -> ColorRepr
 toRepr (r, g, b) = map fromIntegral [r, g, b]
 
