@@ -37,9 +37,7 @@ parseArgs :: IO (Maybe Opts)
 parseArgs = do
   as <- getArgs
   case as of
-    [k, cl, fpath] -> do
-      file <- readFile fpath
-      return . Just $ Opts (read k) (read cl) $ read @Pixel <$> (lines file)
+    [k, cl, fpath] -> return . Just . Opts (read k) (read cl) . getPixels =<< readFile fpath
     [] -> helpText >> return Nothing
     _ -> error "Invalid arguments.\n"
 

@@ -62,9 +62,9 @@ kmeans' n k points = fixpoint (refineCluster n) initialClustering
                   -> Clustering (GenPoint a n) @-}
 refineCluster n clusters = clusters'
   where
-    centers = map (clusterCenter n) clusters
-    points  = concat clusters                                        -- Voronoi polygons
-    cPoints = sort [(nearestCenter n p centers, p) | p <- points]
+    centers   = map (clusterCenter n) clusters
+    points    = concat clusters                                      -- Voronoi polygons
+    cPoints   = sort [(nearestCenter n p centers, p) | p <- points]
     cGroups   = groupBy ((==) `on` fst) cPoints                      -- regroup
     clusters' = map (map snd) cGroups
 

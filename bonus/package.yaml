@@ -61,5 +61,6 @@ tests:
     dependencies:
     - icomp
     - hspec
+    - hspec-core
     - silently
     - QuickCheck

@@ -3,9 +3,9 @@
 
 import Test.Hspec
 import Test.QuickCheck
+import Test.Hspec.Core.QuickCheck (modifyMaxSuccess)
 import System.IO.Silently
 import System.Environment
-import Control.Exception (evaluate)
 import Prog
 import Lib.Parser
 
@@ -17,16 +17,20 @@ main :: IO ()
 main = hspec do
 
   describe "Lib.Parser.Byte" do
-    it "follows (Read, Show) laws" $ property $
+    success 1000 $ it "follows (Read, Show) laws" $ property $
       \x -> read (show x) == (x :: Byte)
 
   describe "Lib.Parser.Pixel" do
-    it "follows (Read, Show) laws" $ property $
+    success 1000 $ it "follows (Read, Show) laws" $ property $
       \x -> read (show x) == (x :: Pixel)
 
   describe "Lib.Parser.toRepr" do
-    it "is the inverse of fromRepr" $ property $
+    success 1000 $ it "is the inverse of fromRepr" $ property $
       \x -> fromRepr (toRepr x) == x
+
+  describe "Lib.Parser.toPoint" do
+    success 1000 $ it "returns valid `Point 3`" $ property $
+      \x@(Pixel _ (r, g, b)) -> toPoint x == (fromIntegral <$> [r, g, b])
 
   describe "Prog.parseArgs" do
     it "drops invalid arguments" do
@@ -80,3 +84,5 @@ out =
                     , Pixel (1, 2) (35, 21, 109)
                     ])
   ]
+
+success = modifyMaxSuccess . const
