@@ -2,14 +2,19 @@
 
 module Main where
 
-import System.Exit       ( exitWith, ExitCode (..) )
+import System.Exit       ( exitSuccess )
 import Control.Exception ( catch, SomeException )
+import System.Random     ( randoms, getStdGen )
+
 import Prog
+import Logic
 
 main :: IO ()
 main = do
   opts <- catch parseArgs (except @SomeException)
   case opts of
-    Just os -> catch (printOut $ calc os)
-                     (except @SomeException)
-    Nothing -> exitWith ExitSuccess
+    Just os -> do
+      gen <- getStdGen
+      catch (printOut $ calc os gen)
+            (except @SomeException)
+    Nothing -> exitSuccess

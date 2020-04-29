@@ -1,28 +1,15 @@
-{-# LANGUAGE FlexibleInstances #-}
-{-# LANGUAGE TypeApplications #-}
+{-# LANGUAGE BlockArguments #-}
 module Prog
   where
 
+import System.Exit ( exitWith, ExitCode(..) )
 import System.IO ( hPrint, stderr )
-import System.Exit
 import System.Environment ( getArgs )
-import Data.Function
-import Data.List
-import Control.Monad
-import Control.Exception hiding (assert)
-import Text.ParserCombinators.ReadP
-import Lib.KMeansHelper
-import Lib.KMeans
-import Lib.Parser
+import Control.Exception  ( throw, AssertionFailed(..) )
 
-instance Exception String
-
-type Result = [Clustering Pixel]
-data Opts = Opts { k  :: Int
-                 , cl :: Double
-                 , ps :: [Pixel]
-                 }
-  deriving (Show, Read, Eq)
+import Lib.Types
+import Lib.Parser ( getPixels )
+import Logic
 
 parseArgs :: IO (Maybe Opts)
 parseArgs = do
@@ -34,41 +21,19 @@ parseArgs = do
           cl' = read cl
       ps <- readFile fpath
       let ps' = getPixels ps
-      return . Just $ Opts (assert (k' > 0 && k' <= length ps) k'
-                                   "n must be natural and smaller than the dataset")
-                           (assert (cl' > 0) cl' "e must be positive")
-                           ps'
+      return . Just $ Opts
+        (assert (k' > 0 && k' <= length ps) k'
+                "n must be natural and smaller than the dataset")
+        (assert (cl' > 0) cl' "e must be positive")
+        ps'
     _ -> error "Invalid arguments.\n"
 
-printOut :: Result -> IO ()
-printOut = mapM_ showCluster
-  where
-    showCluster :: Clustering Pixel -> IO ()
-    showCluster cs = forM_ cs $ \c -> do
-      putStrLn "---"
-      print $ findMean c
-      putStrLn "-"
-      mapM_ print c
-
-findMean :: [Pixel] -> Color
-findMean cs = (mRed, mGreen, mBlue)
-  where
-    mean :: (Fractional a, Real b) => [b] -> a
-    mean xs = realToFrac (sum xs) / genericLength xs
-
-    chew :: (Integral c, Real b) => (Pixel -> b) -> c
-    chew f = round . mean $ map f cs
-    mRed   = chew n1
-    mGreen = chew n2
-    mBlue  = chew n3
-
-    f = fromIntegral
-    n1 (Pixel _ (r, _, _)) = f r
-    n2 (Pixel _ (_, r, _)) = f r
-    n3 (Pixel _ (_, _, r)) = f r
-
-calc :: Opts -> Result
-calc (Opts k d ps) = [kmeansGen 3 toPoint k ps]
+printOut :: [Result] -> IO ()
+printOut = mapM_ \(c, ps) -> do
+  putStrLn "---"
+  print c
+  putStrLn "-"
+  mapM_ print ps
 
 except :: Show a => a -> IO b
 except e = hPrint stderr e >> exitWith (ExitFailure 84)
