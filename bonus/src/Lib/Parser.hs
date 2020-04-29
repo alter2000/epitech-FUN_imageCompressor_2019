@@ -72,7 +72,7 @@ toRepr (r, g, b) = map fromIntegral [r, g, b]
 {-@ fromRepr :: v:ColorRepr -> Color @-}
 fromRepr :: ColorRepr -> Color
 fromRepr [r, g, b] = (round r, round g, round b)
-fromRepr _ = error "invalid color representation, this error should have never shown"
+fromRepr _ = error "Lib.Parser.fromRepr: invalid color representation, this error should have never shown"
 
 {-@ toPoint :: Pixel -> Point 3 @-}
 toPoint :: Pixel -> Point 3

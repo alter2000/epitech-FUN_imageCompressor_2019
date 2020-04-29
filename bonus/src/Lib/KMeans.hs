@@ -16,13 +16,14 @@ import Data.Ord (comparing)
 #ifdef LIQUID
 import Language.Haskell.Liquid.Prelude (liquidError, liquidAssume, liquidAssert)
 #else
+import Control.Exception (assert)
 # define liquidError error
 
 liquidAssume :: Bool -> a -> a
-liquidAssume b x = if b then x else error "broken assumption"
+liquidAssume b x = if b then x else error "Lib.KMeans.liquidAssume: broken assumption"
 
 liquidAssert :: Bool -> a -> a
-liquidAssert _ a = a
+liquidAssert = assert
 #endif
 
 
@@ -36,9 +37,9 @@ instance Eq (WrapType [Double] a) where
    (==) = (==) `on` getVect
 
 instance Ord (WrapType [Double] a) where
-    compare = comparing getVect
+  compare = comparing getVect
 
-{-@ type GenPoint a N  = WrapType (Point N) a @-}
+{-@ type GenPoint a N = WrapType (Point N) a @-}
 
 {-@ kmeans' :: n: Int
             -> k: PosInt
@@ -80,7 +81,7 @@ clusterCenter n xs = map average
     average :: [Double] -> Double
     average = (`safeDiv` pts) . sum
 
-    safeDiv n 0 = liquidError "divide by zero"
+    safeDiv n 0 = liquidError "Lib.KMeans.clusterCenter.safeDiv: divide by zero"
     safeDiv n d = n / fromIntegralNZ d
 
     fromIntegralNZ = assumeNZ . fromIntegral . assertNZ
