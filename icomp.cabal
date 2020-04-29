@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 3c8a5ce192b8d728205e374a41f92642e3f270599d9ba5f63f50a3ecc9f06892
+-- hash: 1f02ed9e45a2195209848aa8623ab726c7fd5b002298c9e034eaebffe6601a9a
 
 name:           icomp
 version:        0.1.0.0
@@ -35,6 +35,8 @@ library
       Lib.KMeans
       Lib.KMeansHelper
       Lib.Parser
+      Lib.Types
+      Logic
       Prog
   other-modules:
       Paths_icomp

@@ -52,8 +52,8 @@ partition size ys@(_:_) = beg : partition size end
 {-@ zipWith :: (a -> b -> c) -> xs:[a] -> (List b (len xs)) -> (List c (len xs)) @-}
 zipWith f (a:as) (b:bs) = f a b : zipWith f as bs
 zipWith _ [] [] = []
-zipWith _ (_:_) [] = liquidError "Lib.KMeansHelper.zipWith: dead code"
-zipWith _ [] (_:_) = liquidError "Lib.KMeansHelper.zipWith: dead code"
+zipWith _  _ [] = liquidError "Lib.KMeansHelper.zipWith: dead code"
+zipWith _ []  _ = liquidError "Lib.KMeansHelper.zipWith: dead code"
 
 {-@ type Matrix a Rows Cols = (List (List a Cols) Rows) @-}
 
