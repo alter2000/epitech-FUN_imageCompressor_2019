@@ -7,14 +7,15 @@ module Lib.KMeans
   , kmeansGen
   ) where
 
+import Prelude hiding ( zipWith )
+import Data.Ord       ( comparing )
+import Data.List      ( sort, minimumBy )
+import Data.Function  ( on )
+
 import Lib.KMeansHelper
-import Prelude hiding (zipWith)
-import Data.List (sort, span, minimumBy)
-import Data.Function (on)
-import Data.Ord (comparing)
 
 #ifdef LIQUID
-import Language.Haskell.Liquid.Prelude (liquidError, liquidAssume, liquidAssert)
+import Language.Haskell.Liquid.Prelude ( liquidError, liquidAssume, liquidAssert )
 #else
 import Control.Exception (assert)
 # define liquidError error
@@ -25,7 +26,6 @@ liquidAssume b x = if b then x else error "Lib.KMeans.liquidAssume: broken assum
 liquidAssert :: Bool -> a -> a
 liquidAssert = assert
 #endif
-
 
 -- | Generalized Points
 data WrapType b a = WrapType

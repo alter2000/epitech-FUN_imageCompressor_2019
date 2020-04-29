@@ -13,13 +13,13 @@ module Lib.KMeansHelper
   , transpose
   ) where
 
-import Prelude hiding (zipWith)
-import Data.List (sort, span, minimumBy)
-import Data.Function (on)
-import Data.Ord (comparing)
-import GHC.TypeNats
+import Prelude hiding ( zipWith )
+import Data.List      ( span )
+import Data.Function  ( on )
+import Data.Ord       ( comparing )
+import GHC.TypeNats   ( Nat )
 #ifdef LIQUID
-import Language.Haskell.Liquid.Prelude (liquidError)
+import Language.Haskell.Liquid.Prelude ( liquidError )
 #else
 # define liquidError error
 #endif
