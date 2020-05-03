@@ -52,7 +52,7 @@ instance Show a => Show (WrapType [Double] a) where
             -> points:[(GenPoint a n)]
             -> (Clustering (GenPoint a n))
   @-}
-kmeans' :: Show a=> Int
+kmeans' :: Int
         -> Int
         -> (Clustering a -> Clustering a -> Bool)
         -> [WrapType [Double] a]
@@ -64,15 +64,15 @@ kmeans' n k cmpF pts = nonfix (cmpF `on` unwrap) (refineCluster n) initC
     cSize = max 1 $ div (length pts + k - 1) k
 
     nonfix :: ([a] -> [a] -> Bool) -> ([a] -> [a]) -> [a] -> [a]
-    nonfix cc f x = if cc x new then x else nonfix cc f new
-      where new = f x
+    nonfix cc f !x = if cc x new then x else nonfix cc f new
+      where !new = f x
 
 
 {-@ refineCluster :: n:Int
                   -> Clustering (GenPoint a n)
                   -> Clustering (GenPoint a n)
   @-}
-refineCluster :: Show a=> Int
+refineCluster :: Int
               -> Clustering (WrapType [Double] a)
               -> Clustering (WrapType [Double] a)
 refineCluster n old = new
@@ -129,7 +129,7 @@ minKey = fst . minimumBy (compare `on` snd)
               -> xs:[a]
               -> (Clustering a)
   @-}
-kmeansGen :: Show a=> Int
+kmeansGen :: Int
           -> (a -> [Double])
           -> (Clustering a -> Clustering a -> Bool)
           -> Int

@@ -37,7 +37,7 @@ type Clustering a = [NonEmptyList a]
 
 -- | TODO: always keeps a single element around
 {-@ groupBy :: (a -> a -> Bool) -> [a] -> (Clustering a) @-}
-groupBy :: Show a=> (a -> a -> Bool) -> [a] -> [[a]]
+groupBy :: (a -> a -> Bool) -> [a] -> [[a]]
 groupBy _ [] = []
 groupBy eq (x:xs) = (x:ys) : groupBy eq zs
   where (ys, zs) = span (eq x) xs

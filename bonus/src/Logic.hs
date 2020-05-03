@@ -1,8 +1,6 @@
 module Logic
   where
 
-import Debug.Trace
-
 import Data.List ( genericLength )
 import Data.Function ( on )
 
@@ -55,16 +53,17 @@ clusteredFor e old new = e > maximum distance'
                     in ret
 
     distance' :: [Double]
-    distance' = let r = zipWith rgbLen (trace (show oldCentroids) oldCentroids) (trace (show newCentroids) newCentroids) in trace ("distance: " ++ show r) r
+    distance' = zipWith rgbLen oldCentroids newCentroids
 
     rgbLen :: Color -> Color -> Double
-    rgbLen x@(r, g, b) y@(r', g', b') = let ret = (distance `on` map fromIntegral) [r, g, b] [r', g', b']
-                                         -- in trace (show x ++ " : " ++ show y ++ "\ndist: " ++ show r) ret
-                                         in ret
+    rgbLen (r, g, b) (r', g', b') = let ret = (distance `on` map fromIntegral) [r, g, b] [r', g', b']
+                                     -- in trace (show x ++ " : " ++ show y ++ "\ndist: " ++ show r) ret
+                                     in ret
 
 meanColor :: [Pixel] -> Color
 meanColor cs = (mRed cs, mGreen cs, mBlue cs)
 
+chew :: Integral c => (a -> Double) -> [a] -> c
 chew g = round . mean . map g
 
 
