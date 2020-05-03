@@ -1,7 +1,10 @@
 module Logic
   where
 
+import Debug.Trace
+
 import Data.List ( genericLength )
+import Data.Function ( on )
 
 import Lib.Types
 import Lib.Parser
@@ -38,44 +41,42 @@ kmeansStep e = kmeansGen 3 toPoint (clusteredFor e)
 
 
 clusteredFor :: Double
-             -> Clustering (WrapType [Double] b)
-             -> Clustering (WrapType [Double] b)
+             -> Clustering Pixel
+             -> Clustering Pixel
              -> Bool
-clusteredFor e old new = e > maximum (distance' oldCentroids newCentroids)
+clusteredFor e old new = e > maximum distance'
   where
-    distance' :: [[Double]] -> [[Double]] -> [Double]
-    distance' = zipWith distance
-    oldCentroids = means old
-    newCentroids = means new
+    oldCentroids, newCentroids :: [Color]
+    oldCentroids = let ret = map meanColor old
+                    -- in trace ("old: " ++ show old ++ "\nsent: " ++ show ret) ret
+                    in ret
+    newCentroids = let ret = map meanColor new
+                    -- in trace ("new: " ++ show new ++ "\nsent: " ++ show ret) ret
+                    in ret
 
-means :: Clustering (WrapType [Double] b) -> [[Double]]
-means = map (meanC . map cmp)
+    distance' :: [Double]
+    distance' = let r = zipWith rgbLen (trace (show oldCentroids) oldCentroids) (trace (show newCentroids) newCentroids) in trace ("distance: " ++ show r) r
 
-
-meanC :: [[Double]] -> [Double]
-meanC cs = [mRed, mGreen, mBlue]
-  where
-    chew g = mean $ map g cs
-    mRed   = chew n1
-    mGreen = chew n2
-    mBlue  = chew n3
-
-    n1 [r, _, _] = r
-    n2 [_, r, _] = r
-    n3 [_, _, r] = r
+    rgbLen :: Color -> Color -> Double
+    rgbLen x@(r, g, b) y@(r', g', b') = let ret = (distance `on` map fromIntegral) [r, g, b] [r', g', b']
+                                         -- in trace (show x ++ " : " ++ show y ++ "\ndist: " ++ show r) ret
+                                         in ret
 
 meanColor :: [Pixel] -> Color
-meanColor cs = (mRed, mGreen, mBlue)
-  where
-    chew g = round . mean $ map g cs
-    mRed   = chew n1
-    mGreen = chew n2
-    mBlue  = chew n3
+meanColor cs = (mRed cs, mGreen cs, mBlue cs)
 
-    f = fromIntegral
-    n1 (Pixel _ (r, _, _)) = f r
-    n2 (Pixel _ (_, r, _)) = f r
-    n3 (Pixel _ (_, _, r)) = f r
+chew g = round . mean . map g
+
+
+mRed, mGreen, mBlue :: Integral c => [Pixel] -> c
+mRed   a = chew n1 a
+mGreen a = chew n2 a
+mBlue  a = chew n3 a
+
+n1, n2, n3 :: Num b => Pixel -> b
+n1 (Pixel _ (r, _, _)) = fromIntegral r
+n2 (Pixel _ (_, r, _)) = fromIntegral r
+n3 (Pixel _ (_, _, r)) = fromIntegral r
 
 mean :: [Double] -> Double
 mean xs = realToFrac (sum xs) / xlen xs

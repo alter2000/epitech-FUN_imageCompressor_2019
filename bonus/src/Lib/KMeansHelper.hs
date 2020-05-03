@@ -13,8 +13,6 @@ module Lib.KMeansHelper
   , distance
   ) where
 
-import Debug.Trace
-
 import Prelude hiding ( zipWith )
 import Data.List      ( span )
 import GHC.TypeNats   ( Nat )
@@ -39,10 +37,13 @@ type Clustering a = [NonEmptyList a]
 
 -- | TODO: always keeps a single element around
 {-@ groupBy :: (a -> a -> Bool) -> [a] -> (Clustering a) @-}
-groupBy :: (a -> a -> Bool) -> [a] -> [[a]]
+groupBy :: Show a=> (a -> a -> Bool) -> [a] -> [[a]]
 groupBy _ [] = []
 groupBy eq (x:xs) = (x:ys) : groupBy eq zs
   where (ys, zs) = span (eq x) xs
+
+{-@ span :: (a -> Bool) -> NonEmptyList a -> (NonEmptyList a, [a]) @-}
+
 
 {-@ zipWith :: (a -> b -> c) -> xs:[a] -> (List b (len xs)) -> (List c (len xs)) @-}
 zipWith :: (a -> b -> c) -> [a] -> [b] -> [c]

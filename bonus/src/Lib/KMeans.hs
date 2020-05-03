@@ -1,3 +1,4 @@
+{-# LANGUAGE BangPatterns #-}
 {-# LANGUAGE CPP #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE FlexibleContexts #-}
@@ -51,19 +52,19 @@ instance Show a => Show (WrapType [Double] a) where
             -> points:[(GenPoint a n)]
             -> (Clustering (GenPoint a n))
   @-}
-kmeans' :: Int
+kmeans' :: Show a=> Int
         -> Int
-        -> (Clustering (WrapType [Double] a)
-              -> Clustering (WrapType [Double] a) -> Bool)
+        -> (Clustering a -> Clustering a -> Bool)
         -> [WrapType [Double] a]
         -> Clustering (WrapType [Double] a)
-kmeans' n k cmpF pts = nonfix cmpF (refineCluster n) initC
+kmeans' n k cmpF pts = nonfix (cmpF `on` unwrap) (refineCluster n) initC
   where
+    unwrap = map (map val)
     initC = partition cSize pts
     cSize = max 1 $ div (length pts + k - 1) k
 
     nonfix :: ([a] -> [a] -> Bool) -> ([a] -> [a]) -> [a] -> [a]
-    nonfix cc f x = if x `cc` new then x else nonfix cc f new
+    nonfix cc f x = if cc x new then x else nonfix cc f new
       where new = f x
 
 
@@ -71,7 +72,7 @@ kmeans' n k cmpF pts = nonfix cmpF (refineCluster n) initC
                   -> Clustering (GenPoint a n)
                   -> Clustering (GenPoint a n)
   @-}
-refineCluster :: Int
+refineCluster :: Show a=> Int
               -> Clustering (WrapType [Double] a)
               -> Clustering (WrapType [Double] a)
 refineCluster n old = new
@@ -128,14 +129,15 @@ minKey = fst . minimumBy (compare `on` snd)
               -> xs:[a]
               -> (Clustering a)
   @-}
-kmeansGen :: Int
+kmeansGen :: Show a=> Int
           -> (a -> [Double])
-          -> (Clustering (WrapType [Double] a)
-              -> Clustering (WrapType [Double] a)
-              -> Bool)
+          -> (Clustering a -> Clustering a -> Bool)
           -> Int
           -> [a]
           -> Clustering a
-kmeansGen n implF cmpF k = map (map val)
+kmeansGen n implF cmpF k = unwrap
                       . kmeans' n k cmpF
-                      . map (\x -> WrapType (implF x) x)
+                      . map wrap
+  where
+    wrap x = WrapType (implF x) x
+    unwrap = map (map val)
