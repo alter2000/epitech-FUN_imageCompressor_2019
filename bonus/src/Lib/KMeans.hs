@@ -63,8 +63,10 @@ kmeans' n k cmpF pts = nonfix (cmpF `on` unwrap) (refineCluster n) initC
     initC = partition cSize pts
     cSize = max 1 $ div (length pts + k - 1) k
 
+    -- TODO: help
     nonfix :: ([a] -> [a] -> Bool) -> ([a] -> [a]) -> [a] -> [a]
-    nonfix cc f !x = if cc x new then x else nonfix cc f new
+    nonfix cc f !x | cc x new  = x
+                   | otherwise = nonfix cc f new
       where !new = f x
 
 
@@ -72,6 +74,7 @@ kmeans' n k cmpF pts = nonfix (cmpF `on` unwrap) (refineCluster n) initC
                   -> Clustering (GenPoint a n)
                   -> Clustering (GenPoint a n)
   @-}
+-- TODO: maybe supply tools to use @fix@?
 refineCluster :: Int
               -> Clustering (WrapType [Double] a)
               -> Clustering (WrapType [Double] a)
