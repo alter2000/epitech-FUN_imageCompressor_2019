@@ -6,7 +6,6 @@
 module Lib.Parser
   where
 
-import Data.List ( stripPrefix )
 import Lib.KMeansHelper
 import Lib.Types
 
@@ -21,7 +20,7 @@ fromRepr _ = error "Lib.Parser.fromRepr: invalid color representation, this erro
 
 {-@ toPoint :: Pixel -> Point 3 @-}
 toPoint :: Pixel -> Point 3
-toPoint p@(Pixel _ (r, g, b)) =
+toPoint (Pixel _ (r, g, b)) =
   fromIntegral <$> [r, g, b]
 
 getPixels :: String -> [Pixel]

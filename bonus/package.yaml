@@ -23,6 +23,16 @@ dependencies:
 - base >= 4.7 && < 5
 - random
 
+default-extensions:
+- TypeApplications
+- StrictData
+- Strict
+- BlockArguments
+- DataKinds
+- GeneralizedNewtypeDeriving
+- ViewPatterns
+- FlexibleInstances
+
 when:
   - condition: flag(liquid)
     cpp-options: -DLIQUID
@@ -47,6 +57,8 @@ executables:
     - -threaded
     - -rtsopts
     - -with-rtsopts=-N
+    - -Wall
+    - -Wno-type-defaults
     dependencies:
     - icomp
 

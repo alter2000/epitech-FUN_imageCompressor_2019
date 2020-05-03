@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 1f02ed9e45a2195209848aa8623ab726c7fd5b002298c9e034eaebffe6601a9a
+-- hash: 35ff1ab5b4250aeadb58edf27e4960d298549c6981e9b4f2e49537e097e3d554
 
 name:           icomp
 version:        0.1.0.0
@@ -42,6 +42,7 @@ library
       Paths_icomp
   hs-source-dirs:
       src
+  default-extensions: TypeApplications StrictData Strict BlockArguments DataKinds GeneralizedNewtypeDeriving ViewPatterns FlexibleInstances
   build-depends:
       base >=4.7 && <5
     , random
@@ -58,7 +59,8 @@ executable icomp-exe
       Paths_icomp
   hs-source-dirs:
       app
-  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  default-extensions: TypeApplications StrictData Strict BlockArguments DataKinds GeneralizedNewtypeDeriving ViewPatterns FlexibleInstances
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N -Wall -Wno-type-defaults
   build-depends:
       base >=4.7 && <5
     , icomp
@@ -77,6 +79,7 @@ test-suite icomp-test
       Paths_icomp
   hs-source-dirs:
       test
+  default-extensions: TypeApplications StrictData Strict BlockArguments DataKinds GeneralizedNewtypeDeriving ViewPatterns FlexibleInstances
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       QuickCheck

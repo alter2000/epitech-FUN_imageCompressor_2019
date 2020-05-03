@@ -16,24 +16,24 @@ parseArgs = do
   as <- getArgs
   case as of
     [] -> helpText >> return Nothing
-    [k, cl, fpath] -> do
-      let k'  = read k
-          cl' = read cl
-      ps <- readFile fpath
-      let ps' = getPixels ps
+    [n, e, fpath] -> do
+      pixels <- getPixels <$> readFile fpath
+      let k'  = read n
+          cl' = read e
       return . Just $ Opts
-        (assert (k' > 0 && k' <= length ps) k'
+        (assert (k' > 0 && k' <= length pixels) k'
                 "n must be natural and smaller than the dataset")
-        (assert (cl' > 0) cl' "e must be positive")
-        ps'
+        (assert (cl' > 0) cl'
+                "e must be positive")
+        pixels
     _ -> error "Invalid arguments.\n"
 
 printOut :: [Result] -> IO ()
-printOut = mapM_ \(c, ps) -> do
+printOut = mapM_ \(c, ps') -> do
   putStrLn "---"
   print c
   putStrLn "-"
-  mapM_ print ps
+  mapM_ print ps'
 
 except :: Show a => a -> IO b
 except e = hPrint stderr e >> exitWith (ExitFailure 84)
